@@ -7,17 +7,30 @@ from lists.views import home_page
 
 class HomePageTest(TestCase):
 	
-	def test_root_url_resolves_to_home_page_view(self):
-		found = resolve('/')
-		self.assertEqual(found.func, home_page)
+	# def test_root_url_resolves_to_home_page_view(self):
+		# found = resolve('/')
+		# self.assertEqual(found.func, home_page)
 		
-	def test_home_page_returns_correct_html(self):
-		request = HttpRequest()	# Assuming that the default value for request method is GET
-		response = home_page(request)
-		expected_html = render_to_string('home.html')
-		self.assertEqual(response.content.decode(), expected_html)
-		# NB: this fails because the actual value of the csrf token template tag
-		# is NOT in the expected_html
+	# def test_home_page_returns_correct_html(self):
+		# # request = HttpRequest()	# Assuming that the default value for request method is GET
+		# # response = home_page(request)
+		# # expected_html = render_to_string('home.html')
+		# # self.assertEqual(response.content.decode(), expected_html)
+		# # NB: this fails because the actual value of the csrf token template tag
+		# # is NOT in the expected_html
+		
+		# response = self.client.get('/')
+		
+		# html = response.content.decode('utf8')
+		# self.assertTrue(html.startswith('<html>'))
+		# self.assertIn('<title>To-Do lists</title>', html)
+		# self.assertTrue(html.strip().endswith('</html>'))
+		
+		# self.assertTemplateUsed(response, 'home.html')
+		
+	def test_uses_home_template(self):
+		response = self.client.get('/')
+		self.assertTemplateUsed(response, 'home.html')
 		
 	def test_home_page_handles_POST_request(self):
 		request = HttpRequest()
