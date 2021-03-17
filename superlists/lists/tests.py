@@ -32,19 +32,8 @@ class HomePageTest(TestCase):
 		response = self.client.get('/')
 		self.assertTemplateUsed(response, 'home.html')
 		
-	def test_home_page_handles_POST_request(self):
-		request = HttpRequest()
-		request.method = "POST"
-		request.POST['item_text'] = "A new list item"
-		
-		response = home_page(request)
+	def test_can_handle_POST_request(self):		
+		response = self.client.post('/', data={'item_text': 'A new list item'})
 		self.assertIn('A new list item', response.content.decode())
 		
-		# The render_to_string function takes, as its second parameter, 
-		# a mapping of variable names to values
-		expected_html = render_to_string(
-			'home.html', {'new_item_text': 'A new list item'}
-		)
-		
-		self.assertEqual(response.content.decode(), expected_html)
-		# Again, this will fail
+		self.assertTemplateUsed(response, 'home.html')
