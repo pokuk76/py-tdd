@@ -33,10 +33,15 @@ class HomePageTest(TestCase):
 		response = self.client.get('/')
 		self.assertTemplateUsed(response, 'home.html')
 		
-	def test_can_handle_POST_request(self):		
+	def test_can_handle_POST_request(self):
+		""" TODO: POST test getting too long? """
 		response = self.client.post('/', data={'item_text': 'A new list item'})
-		self.assertIn('A new list item', response.content.decode())
 		
+		self.assertEqual(Item.objects.count(), 1)
+		new_item = Item.objects.first() #equivalent to Item.objects.all()[0]
+		self.assertEqual(new_item.text, "A new list item")
+		
+		self.assertIn('A new list item', response.content.decode())
 		self.assertTemplateUsed(response, 'home.html')
 		
 class ItemModelTest(TestCase):
