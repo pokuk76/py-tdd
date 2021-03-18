@@ -19,7 +19,8 @@ class NewVisitorTest(LiveServerTestCase):
 	Only functions that begin with "test_" will be run
 	"""
 	
-	""" TODO: Clean up database after functional test """
+	""" TODO: Find out if there is a way to have multiline comment that 
+		do not become docstrings """
 	
 	def setUp(self):
 		self.browser = webdriver.Chrome(executable_path=CHROMEDRIVER_EXECUTABLE_PATH, options=OPTIONS)
