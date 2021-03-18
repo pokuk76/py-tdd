@@ -6,11 +6,13 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options	# For Google Chrome ¬_¬
+from selenium.common.exceptions import WebDriverException
 
-options = Options()
-#chrome_user_data_path_windows = r"C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default"
-options.add_argument(r"user-data-dir=C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default")
-chromedriver_executable_path = r"C:\Users\poku.flacko\Downloads\Applications\chromedriver_win32\chromedriver.exe"
+OPTIONS = Options()
+OPTIONS.add_argument(r"user-data-dir=C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default")
+CHROMEDRIVER_EXECUTABLE_PATH = r"C:\Users\poku.flacko\Downloads\Applications\chromedriver_win32\chromedriver.exe"
+
+MAX_WAIT = 10
 
 class NewVisitorTest(LiveServerTestCase):
 	"""
@@ -20,17 +22,26 @@ class NewVisitorTest(LiveServerTestCase):
 	""" TODO: Clean up database after functional test """
 	
 	def setUp(self):
-		self.browser = webdriver.Chrome(executable_path=chromedriver_executable_path, options=options)
+		self.browser = webdriver.Chrome(executable_path=CHROMEDRIVER_EXECUTABLE_PATH, options=OPTIONS)
 		self.browser.implicitly_wait(3)
 		
 	def tearDown(self):
 		self.browser.quit()
 		
-	def check_for_row_in_table(self, row_text):
-		table = self.browser.find_element_by_id('id_list_table')
-		rows = table.find_elements_by_tag_name('tr')
-		self.assertIn(row_text, [row.text for row in rows])
-		
+	def wait_for_row_in_table(self, row_text):
+		start_time = time.time()
+		while True:
+			try:
+				table = self.browser.find_element_by_id('id_list_table')
+				rows = table.find_elements_by_tag_name('tr')
+				self.assertIn(row_text, [row.text for row in rows])
+				return
+			except (AssertionError, WebDriverException) as e:
+				if (time.time() - start_time) > MAX_WAIT:
+					raise e
+				time.sleep(0.5)
+
+				
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		""" Edith(?) has heard about a cool new online to-do app. She goes 
 			to check out its homepage """
@@ -55,8 +66,7 @@ class NewVisitorTest(LiveServerTestCase):
 		""" When she hits enter, the page updates, and now the page lists
 			"1: Buy peacock feathers" as an item in a to-do list table """
 		input_box.send_keys(Keys.ENTER)
-		time.sleep(3)
-		self.check_for_row_in_table("1: Buy peacock feathers")
+		self.wait_for_row_in_table("1: Buy peacock feathers")
 		
 		""" There is still a text box inviting her to add another item. She 
 			enters "Use peacock feathers to make a fly" (Edith is very 
@@ -66,11 +76,10 @@ class NewVisitorTest(LiveServerTestCase):
 		# I suppose the page reloads after we post the first list item so it might be necessary
 		input_box.send_keys("Use peacock feathers to make a fly")
 		input_box.send_keys(Keys.ENTER)
-		time.sleep(3)
 		
 		""" The page updates again, and now shows both items on her list """
-		self.check_for_row_in_table("1: Buy peacock feathers")
-		self.check_for_row_in_table("2: Use peacock feathers to make a fly")		
+		self.wait_for_row_in_table("1: Buy peacock feathers")
+		self.wait_for_row_in_table("2: Use peacock feathers to make a fly")		
 		
 		
 		self.fail("FINISH THE TEST")
