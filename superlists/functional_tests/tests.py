@@ -2,15 +2,17 @@ import os
 import time
 
 import unittest
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options	# For Google Chrome ¬_¬
 
 options = Options()
-chrome_user_data_path_windows = r"C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default"
+#chrome_user_data_path_windows = r"C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default"
 options.add_argument(r"user-data-dir=C:\Users\poku.flacko\AppData\Local\Google\Chrome\User Data\Default")
+chromedriver_executable_path = r"C:\Users\poku.flacko\Downloads\Applications\chromedriver_win32\chromedriver.exe"
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 	"""
 	Only functions that begin with "test_" will be run
 	"""
@@ -18,7 +20,7 @@ class NewVisitorTest(unittest.TestCase):
 	""" TODO: Clean up database after functional test """
 	
 	def setUp(self):
-		self.browser = webdriver.Chrome(executable_path="C:\\Users\\poku.flacko\\Downloads\\Applications\\chromedriver_win32\\chromedriver.exe", options=options)
+		self.browser = webdriver.Chrome(executable_path=chromedriver_executable_path, options=options)
 		self.browser.implicitly_wait(3)
 		
 	def tearDown(self):
@@ -32,7 +34,7 @@ class NewVisitorTest(unittest.TestCase):
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		""" Edith(?) has heard about a cool new online to-do app. She goes 
 			to check out its homepage """
-		self.browser.get("http://localhost:8000")
+		self.browser.get(self.live_server_url)
 		
 		""" She notices the page title and header mention to-do lists """
 		self.assertIn('To-Do', self.browser.title)
@@ -75,6 +77,3 @@ class NewVisitorTest(unittest.TestCase):
 		
 		""" Edit wonders whether the site will remember her list. 
 			Then she sees... """
-
-if __name__ == "__main__":
-	unittest.main(warnings="ignore")
