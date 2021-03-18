@@ -15,6 +15,8 @@ class NewVisitorTest(unittest.TestCase):
 	Only functions that begin with "test_" will be run
 	"""
 	
+	""" TODO: Clean up database after functional test """
+	
 	def setUp(self):
 		self.browser = webdriver.Chrome(executable_path="C:\\Users\\poku.flacko\\Downloads\\Applications\\chromedriver_win32\\chromedriver.exe", options=options)
 		self.browser.implicitly_wait(3)

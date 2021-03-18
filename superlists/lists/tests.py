@@ -7,6 +7,13 @@ from lists.views import home_page
 from lists.models import Item
 
 class HomePageTest(TestCase):
+	""" So TestCase creates a test database for unit tests (this explain why 
+		see "Destroying test database for alias 'default'..." at the end of 
+		unit tests 
+		
+		The same does not seem to be true for the unittest.TestCase class used 
+		in our functional tests	
+	"""
 	
 	# def test_root_url_resolves_to_home_page_view(self):
 		# found = resolve('/')
@@ -33,16 +40,33 @@ class HomePageTest(TestCase):
 		response = self.client.get('/')
 		self.assertTemplateUsed(response, 'home.html')
 		
-	def test_can_handle_POST_request(self):
-		""" TODO: POST test getting too long? """
+	def test_can_save_POST_request(self):
 		response = self.client.post('/', data={'item_text': 'A new list item'})
 		
 		self.assertEqual(Item.objects.count(), 1)
 		new_item = Item.objects.first() #equivalent to Item.objects.all()[0]
 		self.assertEqual(new_item.text, "A new list item")
 		
-		self.assertIn('A new list item', response.content.decode())
-		self.assertTemplateUsed(response, 'home.html')
+	def test_redirects_after_POST(self):
+		response = self.client.post('/', data={'item_text': "A new list item"})
+		self.assertEqual(response.status_code, 302)
+		self.assertEqual(response['location'], '/')
+	
+	def test_only_saves_items_when_necessary(self):
+		self.client.get('/')
+		self.assertEqual(Item.objects.count(), 0)
+	
+	def test_displays_all_list_items(self):
+		# Set up test
+		Item.objects.create(text='itemey 1')
+		Item.objects.create(text='itemey 2')
+		
+		# Invoke code/unit under test 
+		response = self.client.get('/')
+		
+		# Assertion(s)
+		self.assertIn('itemey 1', response.content.decode())
+		self.assertIn('itemey 2', response.content.decode())
 		
 class ItemModelTest(TestCase):
 	

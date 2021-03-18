@@ -1,14 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from lists.models import Item
 
 def home_page(request):
-	""" TODO: Don't save blank items for every request """
-	item = Item()
-	item.text = request.POST.get("item_text", '')
-	item.save()
+	if request.method == "POST":
+		# comes in as JSON, which is transformed into a Python dictionary
+		Item.objects.create(text=request.POST['item_text'])
+		# objects.create is a shorthand for the following 3 lines:
+		# item = Item()
+		# item.text = request.POST.get("item_text", '')
+		# item.save()
+		return redirect('/')
 	
-	return render(request, 'home.html', 
-		{'new_item_text': item.text }
-	)
+	items = Item.objects.all()
+	return render(request, 'home.html', {'items': items})
