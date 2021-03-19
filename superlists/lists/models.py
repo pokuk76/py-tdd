@@ -1,8 +1,9 @@
 from django.db import models
 
-# Create your models here.
+""" TODO: Support more than one list """
+class List(models.Model):
+	pass
 
 class Item(models.Model):
 	text = models.TextField(default="")
-
-""" TODO: Support more than one list """
+	list = models.ForeignKey(List, default=None, on_delete=models.CASCADE)
