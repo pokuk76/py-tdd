@@ -4,13 +4,15 @@
 	</head>
 	<body>
 		<h1>Your To-Do list</h1>
-		<form method="POST" action="/lists/new">
+		<form method="POST" action="/lists/{{ list.id }}/add_item">
+		<!-- TODO: Figure out exactly what action does -->
 			<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
 			{% csrf_token %}
 		</form>
 		
 		<table id="id_list_table">
-			{% for item in items %}
+			{% for item in list.item_set.all %}
+			<!-- .item_set is a "reverse lookup" (read about it in the docs -->
 				<tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
 			{% endfor %}
 		</table>
