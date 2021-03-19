@@ -1,6 +1,5 @@
 from django.db import models
 
-""" TODO: Support more than one list """
 class List(models.Model):
 	pass
 

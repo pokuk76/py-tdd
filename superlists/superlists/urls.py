@@ -18,7 +18,6 @@ from django.urls import path, include
 import lists.views
 import lists.urls
 
-""" TODO: Refactor away some duplication in the urls """
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', lists.views.home_page, name='home'),
