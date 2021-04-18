@@ -1,4 +1,5 @@
-superlists/db.sqlite3
-superlists\__pycache__
 *.pyc
 .vscode/
+superlists/static
+superlists/db.sqlite3
+superlists/__pycache__
