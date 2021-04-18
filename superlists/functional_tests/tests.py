@@ -2,7 +2,7 @@ import os
 import time
 
 import unittest
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options	# For Google Chrome ¬_¬
@@ -14,7 +14,7 @@ CHROMEDRIVER_EXECUTABLE_PATH = r"C:\Users\poku.flacko\Downloads\Applications\chr
 
 MAX_WAIT = 10
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 	"""
 	Only functions that begin with "test_" will be run
 	"""
